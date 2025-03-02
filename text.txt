@@ -1,0 +1,50 @@
+
+### **3️⃣ ORDER BY Test**
+print("\n🔹 SELECT Player ORDER BY height DESC")
+request = MySqliteRequest().from_table("nba_players.csv").select(["Player", "height"]).order("DESC", "height")
+print(request.run())  # Should return players sorted by height in descending order
+
+
+### **4️⃣ INSERT Test**
+print("\n🔹 INSERT INTO nba_players.csv")
+new_player = {
+    "Player": "Test Player",
+    "height": "200",
+    "weight": "90",
+    "collage": "Test University",
+    "born": "2000",
+    "birth_city": "Test City",
+    "birth_state": "Test State"
+}
+request = MySqliteRequest().insert("nba_players.csv").values(new_player)
+request.run()
+
+# Verify Insert
+print("\n✅ Checking if 'Test Player' was inserted:")
+request = MySqliteRequest().from_table("nba_players.csv").select("*").where("Player", "Test Player")
+print(request.run())  # Should return the inserted player
+
+
+### **5️⃣ UPDATE Test**
+print("\n🔹 UPDATE nba_players.csv SET birth_city = 'Updated City' WHERE Player = 'Test Player'")
+request = MySqliteRequest().update("nba_players.csv").set({"birth_city": "Updated City"}).where("Player", "Test Player")
+request.run()
+
+# Verify Update
+print("\n✅ Checking if 'Test Player' birth_city is updated:")
+request = MySqliteRequest().from_table("nba_players.csv").select(["Player", "birth_city"]).where("Player", "Test Player")
+print(request.run())  # Should show updated birth_city
+
+
+### **6️⃣ DELETE Test**
+print("\n🔹 DELETE FROM nba_players.csv WHERE Player = 'Test Player'")
+request = MySqliteRequest().from_table("nba_players.csv").delete().where("Player", "Test Player")
+request.run()
+
+# Verify Delete
+print("\n✅ Checking if 'Test Player' was deleted:")
+request = MySqliteRequest().from_table("nba_players.csv").select("*").where("Player", "Test Player")
+print(request.run())  # Should return an empty list
+
+
+print("\n🎉 All tests completed successfully!")

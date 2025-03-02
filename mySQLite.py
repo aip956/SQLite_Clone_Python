@@ -17,14 +17,19 @@ class MySqliteRequest:
         self.table_name = table_name
         return self
     
-    def select(self, colums):
+    def select(self, columns):
         """Specifies the columns to retrieve."""
         self.query_type = "SELECT"
-        self.columns = columns if isinstance(columns, list) else [columns]
-
+        # If * is given, store None to indicate selecting all columns
+        if columns == "*":
+            self.comumns = None
+        else:
+            self.columns = columns if isinstance(columns, list) else [columns]
+        return self
+    
     def where(self, column_name, value):
         """Adds a filtering condition."""
-        self.contitions[column_name] = value
+        self.conditions[column_name] = value
         return self
     
     def join(self, column_on_db_a, filename_db_b, column_on_db_b):
@@ -79,17 +84,36 @@ class MySqliteRequest:
         results = []
 
         with open(self.table_name, "r", newline="") as file:
-            reader = csv.DictReader(file)
+            reader = csv.reader(file)
+            headers = next(reader) # Read the first row manually
+            # Remove first empty column and strip spaces from header
+            headers = [header.strip() for header in headers[1:]]
+            # Read the actal data, skipping first col
+            # reader = csv.DictReader(file, fieldnames=headers)
+            reader = csv.reader(file)
+
+            # Clean up fieldnames; remove empty first column and strip spaces
+            # reader.fieldnames = [header.strip() for header in reader.fieldnames if header.strip()]
+
             for row in reader:
-                if self.conditions and not all(row[col] == str(val) for col, val in self.conditions.items()):
+                row = row[1:] # Remove first column
+                row_dict = dict(zip(headers, row)) # Map headers to row data
+
+                # row = {key: value for key, value in row.items() if key} # Remove empty keys
+                # Apply WHERE conditions if they exist
+                if self.conditions and not all(row_dict[col] == str(val) for col, val in self.conditions.items()):
                     continue # Skip rows that don't match WHERE condition
-                
-                selected_row = {col: row[col] for col in self.columns} if self.columns else row
+                # If self.columns is None, select all columns
+
+                # selected_row = row if self.columns is None else {col: row[col] for col in self.columns} 
+
+                selected_row = row_dict if self.columns is None else {col: row_dict[col] for col in self.columns} 
                 results.append(selected_row)
 
+        # Apply ORDER BY if specified
         if self.order_by:
             column, order = self.order_by
-            results.sort(key=lambda x:x[column], reverse=(order == "DESC"))
+            results.sort(key=lambda x: x[column], reverse=(order == "DESC"))
 
         return results
         
@@ -122,7 +146,7 @@ class MySqliteRequest:
     def _execute_delete(self):
         """ Executes a DELETE query"""
         rows = []
-        with open(self.table_name, "r" newline="") as file:
+        with open(self.table_name, "r", newline="") as file:
             reader = csv.DictReader(file)
             for row in reader:
                 if not all (row[col] == str(val) for col, val in self.conditions.items()):
