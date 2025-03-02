@@ -86,3 +86,49 @@ class MySqliteRequest:
                 
                 selected_row = {col: row[col] for col in self.columns} if self.columns else row
                 results.append(selected_row)
+
+        if self.order_by:
+            column, order = self.order_by
+            results.sort(key=lambda x:x[column], reverse=(order == "DESC"))
+
+        return results
+        
+    def _execute_insert(self):
+        """ Executes an INSERT query. """
+        file_exists = os.path.exists(self.table_name)
+        with open(self.table_name, "a", newline="") as file:
+            writer = csv.DictWriter(file, fieldnames=self.insert_data.keys())
+
+            if not file_exists:
+                writer.writeheader()
+
+            writer.writerow(self.insert_data)
+
+    def _execute_update(self):
+        """ Executes an UPDATE query. """
+        rows = []
+        with open(self.table_name, "r", newline="") as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                if all(row[col] == str(val) for col, val in self.conditions.items()):
+                    row.update(self.update_data)
+                rows.append(row)
+        
+        with open(self.table_name, "w", newline="") as file:
+            writer = csv.DictWriter(file, fieldnames=rows[0].keys())
+            writer.writeheader()
+            writer.writerows(rows)
+
+    def _execute_delete(self):
+        """ Executes a DELETE query"""
+        rows = []
+        with open(self.table_name, "r" newline="") as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                if not all (row[col] == str(val) for col, val in self.conditions.items()):
+                    rows.append(row)
+
+        with open(self.table_name, "w", newline="") as file:
+            writer = csv.DictWriter(file, fieldnames=rows[0].keys())
+            writer.writeheader()
+            writer.writerows(rows)
