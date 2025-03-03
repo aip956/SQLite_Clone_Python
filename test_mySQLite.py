@@ -18,11 +18,25 @@ import csv
 # print("All NBA Player Names:", request.run())
 
 # Where condition test
-print("\n SELECT Player WHERE birth_state = 'Indiana'")
-request = MySqliteRequest().from_table("nba_players.csv").select(["Player", "birth_state"]).where("birth_state", "Indiana")
+# print("\n SELECT Player WHERE birth_state = 'Indiana'")
+# request = MySqliteRequest().from_table("nba_players.csv").select(["Player", "birth_state"]).where("birth_state", "Indiana")
+# print(request.run())
+
+
+# ORDER BY Test
+print("\n SELECT Player ORDER BY height DESC")
+request = MySqliteRequest().from_table("nba_players.csv").select(["Player", "height"]).order("DESC","height")
 print(request.run())
 
-
-
-
-
+# INSERT Test
+print("\n INSERT INTO nba_players.csv")
+new_player = {
+    "Player": "Test Player",
+    "height": "170",
+    "weight": "90",
+    "collage": "Test University",
+    "born": "2000",
+    "birth_city": "Test City",
+    "birth_state": "Test State"
+}
+request = MySqliteRequest().insert("nba_players.csv").values(new_player)
