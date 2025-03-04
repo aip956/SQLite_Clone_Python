@@ -128,14 +128,32 @@ class MySqliteRequest:
             raise ValueError("No data provided for INSERT")
         
         file_exists = os.path.exists(self.table_name)
+
+        # Read current rows to find the last index
+        last_index = -1
+        if file_exists and os.stat(self.table_name).st_size > 0:
+            with open(self.table_name, "a", newline="") as file:
+                reader = csv.reader(file)
+                next(reader) # Skip header
+                for row in reader:
+                    if row: # Ensure not empty row
+                        last_index = int(row[0]) # First column is index
+        
+        # Assing a new ind num (increment from last row)
+        new_index = last_index + 1
+
+        # Add the index to the new row
+        new_row = {**{"id": new_index}, **self.insert_data} # Merge ID with insert data
+
         with open(self.table_name, "a", newline="") as file:
-            writer = csv.DictWriter(file, fieldnames=self.insert_data.keys())
+            writer = csv.DictWriter(file, fieldnames=["id"] + list(self.insert_data.keys())) # Ensure id is first
             
             # Write headers if file is empty
             if not file_exists or os.stat(self.table_name).st_size == 0:
-                writer.writeheader()
+                writer.writeheader() # Write header only if file is empty
 
             writer.writerow(self.insert_data)
+            return f"Inserted: {new_row}"
 
     def _execute_update(self):
         """ Executes an UPDATE query. """
