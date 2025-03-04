@@ -42,7 +42,12 @@ class MySqliteRequest:
         self.order_by = (column_name, order)
         return self
     
-    def insert(self, data):
+    def insert(self, table_name):
+        """ Specifies table for inserting data. """
+        self.query_type = "INSERT"
+        self.table_name = table_name
+        return self
+    def values(self, data):
         """ Specifies data for INSERT queries. """
         self.insert_data = data
         return self
@@ -119,11 +124,15 @@ class MySqliteRequest:
         
     def _execute_insert(self):
         """ Executes an INSERT query. """
+        if not self.insert_data:
+            raise ValueError("No data provided for INSERT")
+        
         file_exists = os.path.exists(self.table_name)
         with open(self.table_name, "a", newline="") as file:
             writer = csv.DictWriter(file, fieldnames=self.insert_data.keys())
-
-            if not file_exists:
+            
+            # Write headers if file is empty
+            if not file_exists or os.stat(self.table_name).st_size == 0:
                 writer.writeheader()
 
             writer.writerow(self.insert_data)
