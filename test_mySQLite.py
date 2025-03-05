@@ -28,17 +28,20 @@ import csv
 # request = MySqliteRequest().from_table("nba_players.csv").select(["Player", "height"]).order("DESC","height")
 # print(request.run())
 
-# INSERT Test
-print("\n INSERT INTO nba_players.csv")
-new_player = {
-    "Player": "Test Player",
-    "height": "170",
-    "weight": "90",
-    "collage": "Test University",
-    "born": "2000",
-    "birth_city": "Test City",
-    "birth_state": "Test State"
-}
-request = MySqliteRequest().insert("nba_players.csv").values(new_player)
-print(request.run()) # Should print inserted row
+# # INSERT Test
+# print("\n INSERT INTO nba_players.csv")
+# new_player = {
+#     "Player": "Test Player",
+#     "height": "170",
+#     "weight": "90",
+#     "collage": "Test University",
+#     "born": "2000",
+#     "birth_city": "Test City",
+#     "birth_state": "Test State"
+# }
+# request = MySqliteRequest().insert("nba_players.csv").values(new_player)
+# print(request.run()) # Should print inserted row
 
+print("\n UPDATE nba_players.csv SET birth_city = 'Updated City' WHERE Player = 'Test Player'")
+request = MySqliteRequest().update("nba_players.csv").set({"birth_city": "Updated City"}).where("Player", "Test Player")
+request.run()

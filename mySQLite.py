@@ -157,19 +157,29 @@ class MySqliteRequest:
 
     def _execute_update(self):
         """ Executes an UPDATE query. """
+        if not self.update_data:
+            raise ValueError("No data provided for UPDATE")
+        
         rows = []
+        updated_count = 0 # Count updated rows
+
         with open(self.table_name, "r", newline="") as file:
             reader = csv.DictReader(file)
-            for row in reader:
-                if all(row[col] == str(val) for col, val in self.conditions.items()):
-                    row.update(self.update_data)
-                rows.append(row)
-        
-        with open(self.table_name, "w", newline="") as file:
-            writer = csv.DictWriter(file, fieldnames=rows[0].keys())
-            writer.writeheader()
-            writer.writerows(rows)
+            fieldnames = reader.fieldnames
 
+            for row in reader:
+                if self.conditions and all(str(row.get(col, "")) == str(val) for col, val in self.conditions.items()):
+                    row.update(self.update_data) # Apply updates
+                    updated_count += 1
+                rows.append(row)
+        # Only update file if changes were made
+        if updated_count > 0:
+            with open(self.table_name, "w", newline="") as file:
+                writer = csv.DictWriter(file, fieldnames=fieldnames) # Use correct fieldnames
+                writer.writeheader()
+                writer.writerows(rows) # All rows have valid keys
+        return f"Update {updated_count} rows"
+    
     def _execute_delete(self):
         """ Executes a DELETE query"""
         rows = []
