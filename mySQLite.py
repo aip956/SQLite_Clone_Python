@@ -152,8 +152,8 @@ class MySqliteRequest:
             if not file_exists or os.stat(self.table_name).st_size == 0:
                 writer.writeheader() # Write header only if file is empty
 
-            writer.writerow(self.insert_data)
-            return f"Inserted: {new_row}"
+            writer.writerow(new_row)
+        return f"Inserted: {new_row}"
 
     def _execute_update(self):
         """ Executes an UPDATE query. """
