@@ -24,9 +24,9 @@ import csv
 
 
 # ORDER BY Test
-print("\n SELECT Player ORDER BY height DESC")
-request = MySqliteRequest().from_table("nba_players.csv").select(["Player", "height"]).order("DESC","height")
-print(request.run())
+# print("\n SELECT Player ORDER BY height DESC")
+# request = MySqliteRequest().from_table("nba_players.csv").select(["Player", "height"]).order("DESC","height")
+# print(request.run())
 
 # INSERT Test
 print("\n INSERT INTO nba_players.csv")
