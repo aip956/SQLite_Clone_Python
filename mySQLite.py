@@ -76,11 +76,11 @@ class MySqliteRequest:
         if self.query_type == "SELECT":
             return self._execute_select()
         elif self.query_type == "INSERT":
-            self._execute_insert()
+            return self._execute_insert()
         elif self.query_type == "UPDATE":
-            self._execute_update()
+            return self._execute_update()
         elif self.query_type == "DELETE":
-            self._execute_delete()
+            return self._execute_delete()
         else:
             raise ValueError("Invalid query type")
         
