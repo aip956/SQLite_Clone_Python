@@ -42,6 +42,7 @@ import csv
 # request = MySqliteRequest().insert("nba_players.csv").values(new_player)
 # print(request.run()) # Should print inserted row
 
-print("\n UPDATE nba_players.csv SET birth_city = 'Updated City' WHERE Player = 'Test Player'")
-request = MySqliteRequest().update("nba_players.csv").set({"birth_city": "Updated City"}).where("Player", "Test Player")
-request.run()
+# print("\n UPDATE nba_players.csv SET birth_city = 'Updated City' WHERE Player = 'Test Player'")
+# request = MySqliteRequest().update("nba_players.csv").set({"birth_city": "Updated City"}).where("Player", "Test Player")
+# request.run()
+
