@@ -46,8 +46,11 @@ import csv
 # request = MySqliteRequest().update("nba_players.csv").set({"birth_city": "Updated City"}).where("Player", "Test Player")
 # request.run()
 
-print("\n DELETE FROM nba_players.csv WHERE Player = 'Test Player'")
-request = MySqliteRequest().from_table("nba_players.csv").delete().where("Player", "Test Player")
-request.run()
+# print("\n DELETE FROM nba_players.csv WHERE Player = 'Test Player'")
+# request = MySqliteRequest().from_table("nba_players.csv").delete().where("Player", "Test Player")
+# request.run()
 
 #Verify delete
+# print("\n Check if 'Test Player' was deleted:")
+# request = MySqliteRequest().from_table("nba_players.csv").select("*").where("Player", "Test Player")
+# print(request.run())
