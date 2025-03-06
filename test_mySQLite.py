@@ -47,3 +47,7 @@ import csv
 # request.run()
 
 print("\n DELETE FROM nba_players.csv WHERE Player = 'Test Player'")
+request = MySqliteRequest().from_table("nba_players.csv").delete().where("Player", "Test Player")
+request.run()
+
+#Verify delete
