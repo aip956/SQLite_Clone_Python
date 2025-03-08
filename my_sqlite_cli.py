@@ -1,5 +1,6 @@
 import csv
 import os
+import readline
 
 class MySqliteRequest:
     def __init__(self):

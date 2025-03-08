@@ -1,4 +1,4 @@
-from mySQLite import my_sqlite_request
+from my_sqlite_request import MySqliteRequest
 import csv
 
 # with open("nba_players.csv", "r", newline="") as file:
@@ -51,6 +51,6 @@ import csv
 # request.run()
 
 #Verify delete
-# print("\n Check if 'Test Player' was deleted:")
-# request = MySqliteRequest().from_table("nba_players.csv").select("*").where("Player", "Test Player")
-# print(request.run())
+print("\n Check if 'Test Player' was deleted:")
+request = MySqliteRequest().from_table("nba_players.csv").select("*").where("Player", "Test Player")
+print(request.run())
