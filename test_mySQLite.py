@@ -1,4 +1,4 @@
-from mySQLite import MySqliteRequest
+from mySQLite import my_sqlite_request
 import csv
 
 # with open("nba_players.csv", "r", newline="") as file:
