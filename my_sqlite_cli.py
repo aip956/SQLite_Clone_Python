@@ -26,6 +26,17 @@ def parse_query(query):
 
         return request.run()
         
+    elif command == "INSERT":
+        """INSERT INTO table VALUES ('val1, 'val2', 'val2)"""
+        table_name = tokens[2]
+        values_index = tokens.index("VALUES")
+        values = query[values_index + 6].strip("();").split(", ")
+        values = [v.strip("'") for v in values]
+
+        request = MySqliteRequest().insert(table_name)
+
+        with open(table_name, "r", newline="") as file:
+            headers = file.readline().strip().split(",")
 
 
 
