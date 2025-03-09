@@ -1,5 +1,3 @@
-import csv
-import os
 import readline
 
 class MySqliteRequest:
@@ -194,3 +192,10 @@ class MySqliteRequest:
             writer = csv.DictWriter(file, fieldnames=rows[0].keys())
             writer.writeheader()
             writer.writerows(rows)
+
+
+# Read csv file
+# Filter rows based on WHERE conditions
+# Sort data if ORDER BY used
+# Return selected columns
+
