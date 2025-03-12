@@ -22,7 +22,7 @@ class MySqliteRequest:
         self.query_type = "SELECT"
         # If * is given, store None to indicate selecting all columns
         if columns == "*":
-            self.comumns = None
+            self.columns = None
         else:
             self.columns = columns if isinstance(columns, list) else [columns]
         return self

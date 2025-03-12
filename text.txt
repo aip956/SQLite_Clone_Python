@@ -48,3 +48,129 @@ print(request.run())  # Should return an empty list
 
 
 print("\n🎉 All tests completed successfully!")
+
+
+CLI:
+
+import readline
+from mySQLite import MySqliteRequest
+
+def parse_query(query):
+    """Parses the SQL-like command into structured parts."""
+    tokens = query.strip().split()
+    command = tokens[0].upper()
+
+    if command == "SELECT":
+        # Handle SELECT statement
+        select_index = tokens.index("SELECT")
+        from_index = tokens.index("FROM")
+        
+        columns = tokens[select_index + 1: from_index]
+        columns = [col.strip(",") for col in columns]  # Clean column list
+
+        table_name = tokens[from_index + 1]
+
+        request = MySqliteRequest().from_table(table_name).select(columns)
+
+        # Check for WHERE clause
+        if "WHERE" in tokens:
+            where_index = tokens.index("WHERE")
+            column_name = tokens[where_index + 1]
+            value = tokens[where_index + 3].strip("'")  # Extract value
+            request = request.where(column_name, value)
+
+        return request.run()
+
+    elif command == "INSERT":
+        # Handle INSERT INTO ... VALUES (...)
+        table_name = tokens[2]
+        values_index = tokens.index("VALUES")
+        values = query[values_index + 6:].strip("();").split(", ")
+        values = [v.strip("'") for v in values]
+
+        # Get column names dynamically
+        request = MySqliteRequest().insert(table_name)
+        
+        # Open the CSV to get field names
+        with open(table_name, "r", newline="") as file:
+            headers = file.readline().strip().split(",")
+        
+        data = dict(zip(headers[1:], values))  # Skip the auto-generated "id"
+        return request.values(data).run()
+
+    elif command == "UPDATE":
+        # Handle UPDATE ... SET ... WHERE ...
+        table_name = tokens[1]
+        set_index = tokens.index("SET")
+        where_index = tokens.index("WHERE")
+
+        updates = {}
+        conditions = {}
+
+        # Parse SET clause
+        set_clause = tokens[set_index + 1: where_index]
+        for i in range(0, len(set_clause), 3):
+            key = set_clause[i]
+            value = set_clause[i + 2].strip("'")
+            updates[key] = value
+
+        # Parse WHERE clause
+        column_name = tokens[where_index + 1]
+        value = tokens[where_index + 3].strip("'")
+        conditions[column_name] = value
+
+        return MySqliteRequest().update(table_name).set(updates).where(column_name, value).run()
+
+    elif command == "DELETE":
+        # Handle DELETE FROM ... WHERE ...
+        table_name = tokens[2]
+        where_index = tokens.index("WHERE")
+        column_name = tokens[where_index + 1]
+        value = tokens[where_index + 3].strip("'")
+
+        return MySqliteRequest().from_table(table_name).delete().where(column_name, value).run()
+
+    elif command == "QUIT":
+        exit(0)
+
+    else:
+        return "❌ Invalid command."
+
+def main():
+    """CLI Interface for SQLite Clone"""
+    print("MySQLite version 0.1 20XX-XX-XX")
+    
+    while True:
+        try:
+            query = input("my_sqlite_cli> ")
+            if query.lower() == "quit":
+                break
+            result = parse_query(query)
+            print(result)
+        except Exception as e:
+            print(f"❌ Error: {e}")
+
+if __name__ == "__main__":
+    main()
+
+
+Run: python3 my_sqlite_cli.py
+Will start an interactive SQLite-like CLI
+
+Select all rows:
+my_sqlite_cli> SELECT * FROM nba_players.csv;
+
+Select specific columns:
+my_sqlite_cli> SELECT Player, birth_state FROM nba_players.csv WHERE birth_state = 'Indiana';
+
+Insert new player:
+my_sqlite_cli> INSERT INTO nba_players.csv VALUES ('Test Player', '170', '90', 'Test University', '2000', 'Test City', 'Test State');
+
+Update player's birth city:
+my_sqlite_cli> UPDATE nba_players.csv SET birth_city = 'Updated City' WHERE Player = 'Test Player';
+
+Delete player:
+my_sqlite_cli> DELETE FROM nba_players.csv WHERE Player = 'Test Player';
+
+Quitting:
+my_sqlite_cli> quit
