@@ -3,10 +3,9 @@ from my_sqlite_request import MySqliteRequest
 
 def parse_query(query):
     """Parses SQL-like commands into structured parts. """
-    tokens = user_input.strip().split()
-
-    if not 
+    tokens = query.strip().split()
     command = tokens[0].upper()
+
 
     if command == "SELECT":
         #Select column1, column2 FROM table WHERE column = value;
@@ -20,6 +19,7 @@ def parse_query(query):
 
         request = MySqliteRequest().from_table(table_name).select(columns)
 
+        # Check for WHERE clause
         if "WHERE" in tokens:
             where_index = tokens.index("WHERE")
             column_name = tokens[where_index + 1]
