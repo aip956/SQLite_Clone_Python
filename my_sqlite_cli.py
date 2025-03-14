@@ -3,7 +3,9 @@ from my_sqlite_request import MySqliteRequest
 
 def parse_query(query):
     """Parses SQL-like commands into structured parts. """
-    tokens = query.strip().split()
+    tokens = user_input.strip().split()
+
+    if not 
     command = tokens[0].upper()
 
     if command == "SELECT":
