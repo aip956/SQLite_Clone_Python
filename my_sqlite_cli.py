@@ -35,10 +35,27 @@ def parse_query(query):
         values = query[values_index + 6].strip("();").split(", ")
         values = [v.strip("'") for v in values]
 
+        # Get column names dynamically
         request = MySqliteRequest().insert(table_name)
 
+        # Open the CSV to get the field names
         with open(table_name, "r", newline="") as file:
             headers = file.readline().strip().split(",")
+
+        data = dict(zip(headers[1:], values)) #Skip the auto-generated "id"
+        return request.values(data).run()
+    
+    elif command == "UPDATE":
+        # Handle UPDATE . . . SET . . . WHERE
+        table_name = tokens[1]
+        select_index = tokens.index("SET")
+        where_index = tokens.index("WHERE")
+
+        updates = {}
+        conditions = {}
+
+        # Parse SET clause
+        
 
 
 
